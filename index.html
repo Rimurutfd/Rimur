@@ -1,0 +1,279 @@
+<html lang="es">
+<head>
+    <style type="text/css">* {user-select: auto !important; -webkit-user-select: auto !important;}</style>
+    <input type="hidden" id="inject_idm_text_selection">
+    <style></style>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bloqueador de anuncios</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #1f2937, #111827);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: #e5e7eb;
+        }
+
+        .container {
+            background: #1f2937;
+            padding: 2rem;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 500px;
+            margin: 1rem;
+            transition: transform 0.3s ease;
+        }
+
+        .container:hover {
+            transform: translateY(-5px);
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #60a5fa;
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .input-group {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid #4b5563;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            background: #374151;
+            color: #e5e7eb;
+        }
+
+        input[type="text"]::placeholder {
+            color: #9ca3af;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #60a5fa;
+            box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.3);
+        }
+
+        .input-icon {
+            position: absolute;
+            top: 50%;
+            left: 1rem;
+            transform: translateY(-50%);
+            color: #9ca3af;
+        }
+
+        input[type="text"] {
+            padding-left: 2.5rem;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap; /* Allow buttons to wrap on smaller screens */
+        }
+
+        button {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #ffffff;
+        }
+
+        button.generate {
+            background-color: #1e40af;
+        }
+
+        button.generate:hover {
+            background-color: #2563eb;
+            transform: translateY(-2px);
+        }
+
+        button.copy {
+            background-color: #047857;
+        }
+
+        button.copy:hover {
+            background-color: #059669;
+            transform: translateY(-2px);
+        }
+
+        button:disabled {
+            background-color: #4b5563;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        #result {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background: #374151;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            word-break: break-all;
+            color: #e5e7eb;
+            line-height: 1.5;
+        }
+
+        #result a {
+            color: #60a5fa;
+            text-decoration: none;
+        }
+
+        #result a:hover {
+            text-decoration: underline;
+        }
+
+        .error {
+            color: #f87171;
+            font-weight: 500;
+            margin-top: 1rem;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                margin: 1rem;
+                padding: 1.5rem;
+            }
+
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            button {
+                padding: 0.6rem 1rem;
+                font-size: 0.9rem;
+                width: 100%; /* Make buttons full width on small screens */
+                justify-content: center; /* Center content in buttons */
+            }
+            
+            .button-group {
+                flex-direction: column; /* Stack buttons vertically on small screens */
+                gap: 0.75rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Bloqueador de anuncios VIDHIDE</h1>
+        <div class="input-group">
+            <i class="fas fa-link input-icon"></i>
+            <input type="text" id="inputUrl" placeholder="Pega el enlace aquí ">
+        </div>
+        <div class="button-group">
+            <button class="generate" onclick="generateLink()">
+                <i class="fas fa-rocket"></i> Generar Enlace
+            </button>
+            <button class="copy" id="copyButton" onclick="copyLink()" disabled="">
+                <i class="fas fa-copy"></i> Copiar Enlace
+            </button>
+        </div>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        function generateLink() {
+            const inputElement = document.getElementById('inputUrl');
+            const resultElement = document.getElementById('result');
+            const copyButton = document.getElementById('copyButton');
+
+            const inputUrl = inputElement.value.trim();
+
+            if (!inputUrl) {
+                resultElement.innerHTML = '<span class="error">Por favor, introduce un enlace.</span>';
+                copyButton.disabled = true;
+                resultElement.style.display = 'block'; // Make sure result area is visible
+                return;
+            }
+
+            // Simple prefix transformation - replace with actual logic if needed
+            const generatedUrl = 'https://vidhide.com/embed?url=' + encodeURIComponent(inputUrl);
+
+            resultElement.textContent = generatedUrl; // Use textContent to avoid XSS issues
+            resultElement.style.display = 'block'; // Make sure result area is visible
+            copyButton.disabled = false;
+        }
+
+        function copyLink() {
+            const resultElement = document.getElementById('result');
+            const copyButton = document.getElementById('copyButton');
+            const linkToCopy = resultElement.textContent;
+
+            if (linkToCopy) {
+                // Check if clipboard API is available
+                if (!navigator.clipboard || !navigator.clipboard.writeText) {
+                    console.error("Clipboard API not available.");
+                    alert("La función de copiar no está disponible en este navegador.");
+                    return;
+                }
+
+                navigator.clipboard.writeText(linkToCopy).then(() => {
+                    // Provide feedback
+                    const originalHTML = copyButton.innerHTML; // Save original content (icon + text)
+                    const originalBg = copyButton.style.backgroundColor;
+
+                    copyButton.innerHTML = '<i class="fas fa-check"></i> ¡Copiado!';
+                    copyButton.style.backgroundColor = '#10b981'; // Tailwind green-500
+
+                    setTimeout(() => {
+                        copyButton.innerHTML = originalHTML;
+                        copyButton.style.backgroundColor = originalBg; // Revert to original color
+                    }, 2000); // Revert after 2 seconds
+                }).catch(err => {
+                    console.error('Error al copiar el enlace: ', err);
+                    // Optional: Show an error message to the user
+                    const originalHTML = copyButton.innerHTML;
+                     const originalBg = copyButton.style.backgroundColor;
+
+                    copyButton.innerHTML = '<i class="fas fa-times"></i> Error';
+                    copyButton.style.backgroundColor = '#ef4444'; // Tailwind red-500
+
+                     setTimeout(() => {
+                        copyButton.innerHTML = originalHTML;
+                         copyButton.style.backgroundColor = originalBg; // Revert
+                    }, 2000);
+                     alert("Error al copiar el enlace."); // Fallback alert
+                });
+            }
+        }
+
+        // Optional: Hide result area initially if empty
+         window.onload = function() {
+             const resultElement = document.getElementById('result');
+             if (!resultElement.textContent.trim()) {
+                 resultElement.style.display = 'none';
+             }
+         };
+
+    </script>
+
+</body>
+</html>
